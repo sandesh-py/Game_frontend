@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { gameService, Game } from '../api/gameService';
-import { memberService, Member } from '../api/memberService';
+import { useState, useEffect } from 'react';
+import { gameService, type Game } from '../api/gameService';
+import { memberService, type Member } from '../api/memberService';
 
 function Admindashboard() {
   const [games, setGames] = useState<Game[]>([]);

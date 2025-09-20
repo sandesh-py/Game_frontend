@@ -421,7 +421,7 @@ function AdminDashboard() {
 
   const handleDeleteGame = (id: string) => {
     if (window.confirm('Are you sure you want to delete this game?')) {
-      const updatedGames = games.filter(game => game.id !== id);
+      const updatedGames = games.filter((game: any) => game.id !== id);
       setGames(updatedGames);
       localStorage.setItem('games', JSON.stringify(updatedGames));
     }
@@ -547,7 +547,7 @@ function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {games.map((game) => (
+              {games.map((game: any) => (
                 <tr key={game.id} style={{ borderBottom: '1px solid #eee' }}>
                   <td style={{ padding: '12px' }}>{game.id}</td>
                   <td style={{ padding: '12px' }}>{game.name}</td>
@@ -787,7 +787,7 @@ function CustomerDashboard() {
           gap: '20px',
           marginTop: '20px'
         }}>
-          {games.map((game) => (
+          {games.map((game: any) => (
             <div
               key={game.id}
               style={{

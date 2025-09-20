@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { gameService } from '../api/gameService';
 import type { Game } from '../api/gameService';
 import { memberService } from '../api/memberService';
@@ -7,7 +7,6 @@ import type { Member } from '../api/memberService';
 function Customerdashboard() {
   const [games, setGames] = useState<Game[]>([]);
   const [member, setMember] = useState<Member | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'games' | 'profile'>('games');
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { memberService, Member } from '../api/memberService';
-import { gameService, Game } from '../api/gameService';
+import { useState } from 'react';
+import { memberService, type Member } from '../api/memberService';
+import { gameService, type Game } from '../api/gameService';
 
 function TestPage() {
   const [members, setMembers] = useState<Member[]>([]);
