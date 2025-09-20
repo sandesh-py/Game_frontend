@@ -4,6 +4,16 @@ React TypeScript frontend for the Game Club Management Application.
 
 ## Quick Deploy on Render
 
+### Option 1: Web Service (Docker)
+1. **Create a new Web Service on Render**
+2. **Connect this GitHub repository**
+3. **Configure:**
+   - **Environment**: `Docker`
+   - **Dockerfile Path**: `./Dockerfile`
+4. **Environment Variables:**
+   - `VITE_API_URL` = `https://your-backend-url.onrender.com`
+
+### Option 2: Static Site (Recommended)
 1. **Create a new Static Site on Render**
 2. **Connect this GitHub repository**
 3. **Configure:**
