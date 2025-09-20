@@ -10,6 +10,11 @@ function Customerdashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'games' | 'profile'>('games');
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('customer_cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+  const [showCart, setShowCart] = useState(false);
 
   // Load data on component mount
   useEffect(() => {
@@ -45,6 +50,61 @@ function Customerdashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const addToCart = (game: Game) => {
+    if (!member) {
+      alert('Please log in to add items to cart');
+      return;
+    }
+
+    if (member.balance < game.price) {
+      alert(`Insufficient balance! You need $${game.price.toFixed(2)} but only have $${member.balance.toFixed(2)}`);
+      return;
+    }
+
+    // Check if game is already in cart
+    const existingItem = cart.find((item: any) => item.id === game.id);
+    if (existingItem) {
+      alert('This game is already in your cart!');
+      return;
+    }
+
+    // Add to cart and reduce balance
+    const newCart = [...cart, { ...game, quantity: 1 }];
+    const newBalance = member.balance - game.price;
+    
+    setCart(newCart);
+    setMember({ ...member, balance: newBalance });
+    
+    // Save to localStorage
+    localStorage.setItem('customer_cart', JSON.stringify(newCart));
+    
+    alert(`"${game.name}" added to cart! Balance reduced by $${game.price.toFixed(2)}`);
+  };
+
+  const removeFromCart = (gameId: string) => {
+    const gameToRemove = cart.find((item: any) => item.id === gameId);
+    if (!gameToRemove || !member) return;
+
+    const newCart = cart.filter((item: any) => item.id !== gameId);
+    const newBalance = member.balance + gameToRemove.price;
+    
+    setCart(newCart);
+    setMember({ ...member, balance: newBalance });
+    
+    // Save to localStorage
+    localStorage.setItem('customer_cart', JSON.stringify(newCart));
+    
+    alert(`"${gameToRemove.name}" removed from cart! Balance restored by $${gameToRemove.price.toFixed(2)}`);
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
+  };
+
+  const getCartItemCount = () => {
+    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
   };
 
   return (
@@ -163,7 +223,7 @@ function Customerdashboard() {
                       cursor: 'pointer',
                       fontSize: '14px'
                     }}
-                    onClick={() => alert(`Game "${game.name}" added to cart! (Demo feature)`)}
+                    onClick={() => addToCart(game)}
                   >
                     Add to Cart
                   </button>

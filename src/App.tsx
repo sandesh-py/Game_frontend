@@ -598,8 +598,14 @@ function CustomerDashboard() {
     return savedBalance ? parseFloat(savedBalance) : 100.0;
   });
 
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('customer_cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [showRechargeForm, setShowRechargeForm] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState(0);
+  const [showCart, setShowCart] = useState(false);
 
   // Refresh games when component mounts or when localStorage changes
   React.useEffect(() => {
@@ -644,6 +650,58 @@ function CustomerDashboard() {
     }
   };
 
+  const addToCart = (game: any) => {
+    if (balance < game.price) {
+      alert(`Insufficient balance! You need $${game.price.toFixed(2)} but only have $${balance.toFixed(2)}`);
+      return;
+    }
+
+    // Check if game is already in cart
+    const existingItem = cart.find((item: any) => item.id === game.id);
+    if (existingItem) {
+      alert('This game is already in your cart!');
+      return;
+    }
+
+    // Add to cart and reduce balance
+    const newCart = [...cart, { ...game, quantity: 1 }];
+    const newBalance = balance - game.price;
+    
+    setCart(newCart);
+    setBalance(newBalance);
+    
+    // Save to localStorage
+    localStorage.setItem('customer_cart', JSON.stringify(newCart));
+    localStorage.setItem('customer_balance', newBalance.toString());
+    
+    alert(`"${game.name}" added to cart! Balance reduced by $${game.price.toFixed(2)}`);
+  };
+
+  const removeFromCart = (gameId: string) => {
+    const gameToRemove = cart.find((item: any) => item.id === gameId);
+    if (!gameToRemove) return;
+
+    const newCart = cart.filter((item: any) => item.id !== gameId);
+    const newBalance = balance + gameToRemove.price;
+    
+    setCart(newCart);
+    setBalance(newBalance);
+    
+    // Save to localStorage
+    localStorage.setItem('customer_cart', JSON.stringify(newCart));
+    localStorage.setItem('customer_balance', newBalance.toString());
+    
+    alert(`"${gameToRemove.name}" removed from cart! Balance restored by $${gameToRemove.price.toFixed(2)}`);
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
+  };
+
+  const getCartItemCount = () => {
+    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -669,6 +727,20 @@ function CustomerDashboard() {
             }}>
               <strong>Balance: ${balance.toFixed(2)}</strong>
             </div>
+            <button
+              onClick={() => setShowCart(!showCart)}
+              style={{
+                backgroundColor: '#ff9800',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                position: 'relative'
+              }}
+            >
+              🛒 Cart ({getCartItemCount()})
+            </button>
             <button
               onClick={() => {
                 localStorage.removeItem('current_user');
@@ -780,6 +852,82 @@ function CustomerDashboard() {
           )}
         </div>
 
+        {/* Cart Section */}
+        {showCart && (
+          <div style={{
+            backgroundColor: '#f8f9fa',
+            padding: '20px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            border: '1px solid #dee2e6'
+          }}>
+            <h2 style={{ margin: '0 0 15px 0', color: '#495057' }}>🛒 Shopping Cart</h2>
+            {cart.length === 0 ? (
+              <p style={{ color: '#6c757d', textAlign: 'center', padding: '20px' }}>
+                Your cart is empty
+              </p>
+            ) : (
+              <div>
+                {cart.map((item: any) => (
+                  <div key={item.id} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '10px',
+                    backgroundColor: 'white',
+                    marginBottom: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #e9ecef'
+                  }}>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <br />
+                      <span style={{ color: '#6c757d' }}>${item.price.toFixed(2)}</span>
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      style={{
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        padding: '5px 10px',
+                        border: 'none',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '15px',
+                  backgroundColor: '#e9ecef',
+                  borderRadius: '5px',
+                  marginTop: '10px'
+                }}>
+                  <strong>Total: ${getCartTotal().toFixed(2)}</strong>
+                  <button
+                    style={{
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      padding: '10px 20px',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => alert('Checkout feature coming soon!')}
+                  >
+                    Checkout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <h2>Available Games</h2>
         <div style={{ 
           display: 'grid', 
@@ -831,10 +979,10 @@ function CustomerDashboard() {
                     cursor: 'pointer',
                     fontSize: '14px'
                   }}
-                  onClick={() => alert(`Game "${game.name}" added to cart! (Demo feature)`)}
+                  onClick={() => addToCart(game)}
                 >
                   Add to Cart
-          </button>
+                </button>
               </div>
             </div>
           ))}
