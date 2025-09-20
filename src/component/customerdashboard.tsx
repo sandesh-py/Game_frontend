@@ -51,6 +51,19 @@ function Customerdashboard() {
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Customer Dashboard</h1>
       
+      {loading && (
+        <div style={{ 
+          backgroundColor: '#e3f2fd', 
+          color: '#1976d2', 
+          padding: '10px', 
+          borderRadius: '4px',
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          Loading...
+        </div>
+      )}
+      
       {error && (
         <div style={{ 
           backgroundColor: '#ffebee', 
