@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 .pnp
@@ -41,4 +42,54 @@ pids
 coverage/
 
 # Vite
+=======
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+build/
+target/
+*.jar
+*.war
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.temp
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+application-*.properties
+!application.properties
+
+# React
+coverage/
+
+# Vite
+>>>>>>> 8f68513ecd059d7a94d45de7a1fd67929ecea2a9
 .vite/
